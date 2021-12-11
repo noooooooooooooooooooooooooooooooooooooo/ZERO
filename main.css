@@ -1,0 +1,165 @@
+body {
+  padding: 0;
+  margin: 0;
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.2rem;
+  color: #111;
+  position: relative;
+}
+
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 50px;
+  background-color: #8f0;
+}
+
+#outgoing {
+  background-color: rgb(58, 58, 58);
+  position: fixed;
+  width: 500px;
+  height: 100vh;
+  left: 0;
+  top: 50px;
+  overflow: auto;
+}
+
+#preview {
+  width: 500px;
+  height: 500px;
+  background-color: rgb(255, 255, 255);
+  position: fixed;
+  top: 150px;
+  left: 0;
+}
+
+#incoming {
+  padding-top: 0;
+  min-width: 500px;
+  width: 80vw; 
+  left: 500px;
+  height: 100vh;
+  overflow: auto;
+  position: fixed;
+  right: 0;
+  top: 50px;
+  background-color: #0ef;
+}
+
+#incoming img {
+  width: 300px;
+  height: 300px;
+  margin: 5px;
+  background-color: rgb(255, 255, 255);
+}
+
+.actions {
+  margin-top: 30px;
+}
+
+.input, label {
+  float: left;
+}
+
+.input {
+  font-size: 1.8rem;
+}
+
+#pColor {
+  width: 70px;
+  height: 40px;
+  margin-right: 10px;
+}
+
+#pOpacity, #pSize {
+  width: 80px;
+}
+
+label {
+  min-width: 50px;
+  display: inline-block;
+  margin: 15px 5px 15px 15px;
+  text-align: right;
+  color: #eee;
+}
+
+#incoming ol {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+#incoming li {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  float: left;
+  margin: 2px;
+}
+
+#incoming li span {
+  position: absolute;
+  bottom: 5px;
+  font-size: 0.9rem;
+  padding: 3px;
+  right: 5px;
+  display: inline-block;
+  color: #eee;
+  background-color: rgba(1, 1, 1, 0.6)
+}
+
+#menu {
+  display: none;
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  background-color: rgba(184, 3, 175, 0.9)
+}
+
+#menu h2 {
+  color: #eee;
+}
+
+section {
+  background-color: rgba(1, 1, 1, 0.5);
+  margin: 3px;
+  padding: 10px 20px;
+}
+
+@media only screen and (max-width: 999px) {
+  #outgoing, #incoming {
+    top: 50px;
+    z-index: 2;
+  }
+
+  #incoming {
+    left: 0;
+    width: 500px;
+    padding-top: 100px;
+    bottom: 0;
+  }
+
+  #incoming li {
+    float: left;
+    width: 300px;
+    height: 300px;
+  }
+
+  #incoming.focus, #outgoing.focus {
+    top: 150px;
+    z-index: 3;
+    padding-top: 0;
+  }
+
+  .actions {
+    position: fixed;
+    bottom: 20px;
+    left: 10px;
+    width: 100vw;
+  }
+}

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ZERO</title>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, height=device-height, user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, target-densitydpi=device-dpi" name="viewport">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gun/gun.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tweetnacl@1.0.3/nacl.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tweetnacl-util@0.15.1/nacl-util.min.js"></script>
+    <link rel='stylesheet' href='main.css' />
+  </head>
+  <body>
+    <header></header>
+    <div id="outgoing">
+      <canvas id="preview"></canvas>
+      <div class="actions">
+        <div>
+          <label for="pSize">width</label>
+          <input id="pSize" class="input" type="number" max="50" min="1" value="1" required>
+        </div>
+        <div>
+          <label for="pColor">color</label>
+          <input id="pColor" class="input" type="color" value="" required>
+        </div>
+        <div>
+          <label for="pOpacity">opacity</label>
+          <input id="pOpacity" class="input" type="number" max="255" min="0" value="255" required>
+        </div>
+        <div>
+          <button id="undo">UNDO</button>
+        </div>
+      </div>
+    </div>
+    <div id="incoming">
+      
+    </div>
+    <div id="menu">
+      <section>
+        <h2>Muted IDs</h2>
+        <div id="muted"></div>
+      </section>
+    </div>
+    <script src="./collab.js" defer></script>
+  </body>
+</html>
