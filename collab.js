@@ -12,10 +12,10 @@
   let opacity = 1.0
   let outgoingActive = true
   const gun = Gun(location.host ? location.origin + '/gun' : 'http://localhost:8080/gun')
-  const newNonce = () => randomBytes(nacl.box.nonceLength)
+  const newNonce = () => nacl.randomBytes(nacl.box.nonceLength)
   const generateKeyPair = () => nacl.box.keyPair()
 
-  let timeline = gun.get('timeline')
+  let timeline = gun.get('timelines')
   let ol = document.createElement('ol')
   let mutedSaved = localStorage.getItem('muted')
   incoming.appendChild(ol)
@@ -24,26 +24,26 @@
 
   function encrypt(secretOrSharedKey, json, key) {
     const nonce = newNonce()
-    const messageUint8 = aotb(JSON.stringify(json))
+    const messageUint8 = nacl.util.decodeUTF8(JSON.stringify(json))
     const encrypted = key ? nacl.box(messageUint8, nonce, key, secretOrSharedKey) : nacl.box.after(messageUint8, nonce, secretOrSharedKey)
     const fullMessage = new Uint8Array(nonce.length + encrypted.length)
     fullMessage.set(nonce)
     fullMessage.set(encrypted, nonce.length)
-    const base64FullMessage = encodeBase64(fullMessage)
+    const base64FullMessage = nacl.util.encodeBase64(fullMessage)
     return base64FullMessage
   }
   
   function decrypt(secretOrSharedKey, messageWithNonce, key) {
-    const messageWithNonceAsUint8Array = decodeBase64(messageWithNonce)
-    const nonce = messageWithNonceAsUint8Array.slice(0, box.nonceLength)
-    const message = messageWithNonceAsUint8Array.slice(box.nonceLength, messageWithNonce.length)
-    const decrypted = key ? box.open(message, nonce, key, secretOrSharedKey) : box.open.after(message, nonce, secretOrSharedKey)
+    const messageWithNonceAsUint8Array = nacl.util.decodeBase64(messageWithNonce)
+    const nonce = messageWithNonceAsUint8Array.slice(0, nacl.box.nonceLength)
+    const message = messageWithNonceAsUint8Array.slice(nacl.box.nonceLength, messageWithNonce.length)
+    const decrypted = key ? nacl.box.open(message, nonce, key, secretOrSharedKey) : nacl.box.open.after(message, nonce, secretOrSharedKey)
   
     if (!decrypted) {
       throw new Error('Could not decrypt message')
     }
   
-    return JSON.parse(encodeUTF8(decrypted))
+    return JSON.parse(nacl.util.encodeUTF8(decrypted))
   }
 
   sigPad.on()
@@ -67,8 +67,8 @@
   if (!keypair || !keypair.publicKey) {
     const newNonce = () => randomBytes(box.nonceLength)
     keypair = generateKeyPair()
-    console.log(keypair)
     localStorage.setItem('keypair', JSON.stringify(keypair))
+    localStorage.setItem('nonce', newNonce)
     let users = gun.get('users')
     const user = {
       publicKey: keypair.publicKey,
@@ -76,10 +76,6 @@
     }
     users.set(user)
   }
-
-  gun.get('users').get(keypair.publicKey).once((_, key) => {
-    console.log('>>>>>>>>', keypair, key)
-  })
 
   let setUrl = setInterval(() => {
     let currentUser = gun.get('users').get(keypair.publicKey)
@@ -138,7 +134,7 @@
   window.onkeyup = (ev) => {
     let data = sigPad.toData()
     if (ev.keyCode === 13 && data) {
-      const messageKeyPair = () => nacl.box.keyPair()
+      const messageKeyPair = generateKeyPair()
       const created = Date.now()
       const content = {
         id: messageKeyPair.publicKey,
@@ -148,8 +144,8 @@
         png: encrypt(nacl.box.before(messageKeyPair.publicKey, keypair.secretKey), sigPad.toDataURL())
       }
 
-      gun.get('timeline').set(content)
-      get.get('users').get(keypair.publicKey).get('posts').set(content)
+      gun.get('timelines').set(content)
+      gun.get('users').get(keypair.publicKey).get('posts').set(content)
       sigPad.clear()
     }
   }
@@ -165,10 +161,7 @@
   timeline.map().on(ig => {
     if (!document.getElementById('i-' + ig.id)) {
       try {
-        const decrypted = decrypt(nacl.box.before({ 
-          publicKey: ig.publicKey, 
-          secretKey: ig.secretKey
-        }, keypair.secretKey), ig.png)
+        const decrypted = decrypt(nacl.box.before({ publicKey: ig.publicKey, secretKey: ig.secretKey }, keypair.secretKey), ig.png)
         let li = document.createElement('li')
         let span = document.createElement('span')
         span.textContent = ig.publicKey
